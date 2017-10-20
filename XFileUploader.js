@@ -1,5 +1,5 @@
 /**
- * @author 孙其尧 描述：version 1.0版本
+ * @author 孙其尧 描述：version 1.0版本 
  */
 function XFileUploader() {
 
@@ -17,16 +17,12 @@ function XFileUploader() {
 	 * FormData对象,存储将上传的文件跟附带信息，附带信息以键值对形式存放
 	 */
 	var formData = new FormData();
-	
-	/**
-	 * 核心上传类
-	 */
-	var xhr = new XMLHttpRequest();
 
 	/**
-	 * 初始化文件上传对象 emId为input [type = file]的Id
+	 * 初始化文件上传对象
+	 * emId为input [type = file]的Id
 	 */
-	this.bindFiles = function(emId) {
+	this.init = function(emId) {
 		fileInput = document.getElementById(emId);
 		fileInput.onchange = function() {
 			var files = fileInput.files;
@@ -49,7 +45,7 @@ function XFileUploader() {
 							.toString()
 							+ 'K';
 				} else {
-					fileSize = (Math.round(fileSize))
+					fileSize = (Math.round(fileSize)
 					.toString()
 					+ 'B';
 				}
@@ -70,19 +66,14 @@ function XFileUploader() {
 				formData.append(name, fileLists[i]);
 			}
 		}
+		formData.append("test", "hello");
+		var xhr = new XMLHttpRequest();
 		xhr.upload.addEventListener("progress", this.onProgress, false);
 		xhr.addEventListener("load", this.onComplete, false);
 		xhr.addEventListener("error", this.onFailed, false);
 		xhr.addEventListener("abort", this.onCanceled, false);
 		xhr.open("POST", url);// 修改成自己的接口
 		xhr.send(formData);
-	}
-	
-	/**
-	 * 取消上传
-	 */
-	this.cancel = function() {
-		xhr.abort();
 	}
 	/**
 	 * 文件上传中
@@ -121,7 +112,7 @@ function XFileUploader() {
 		if (onFailed) {
 			onFailed("failed");
 		}
-		console.log("onFailed");
+		console.log("onSuccess");
 	}
 	/**
 	 * 文件取消上传
@@ -177,7 +168,7 @@ function XFileUploader() {
 
 /**
  * 定义键值对
- */
+ * */
 function HashMap() {
 	// 定义长度
 	var length = 0;
