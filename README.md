@@ -1,7 +1,7 @@
 # XFUploader
 js文件上传插件，支持上传进度获取，支持附加参数设置，支持批量文件上传
 
-1.引入XFileUploader.js
+1.引入XUploader.js
 
 2.页面中定义input控件
 
