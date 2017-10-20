@@ -1,28 +1,32 @@
 /**
- * @author å­™å…¶å°§ æè¿°ï¼šversion 1.0ç‰ˆæœ¬ 
+ * @author ËïÆäÒ¢ ÃèÊö£ºversion 1.0°æ±¾
  */
-function XFileUploader() {
+function XUploader() {
 
 	/**
-	 * å¯¹åº”inputå¯¹è±¡
+	 * ¶ÔÓ¦input¶ÔÏó
 	 */
 	var fileInput;
 
 	/**
-	 * å…¨å±€å›è°ƒå‡½æ•°,å¤–éƒ¨ä¼ å…¥
+	 * È«¾Ö»Øµ÷º¯Êı,Íâ²¿´«Èë
 	 */
 	var onUploading, onSuccess, onFailed, onCanceled;
 
 	/**
-	 * FormDataå¯¹è±¡,å­˜å‚¨å°†ä¸Šä¼ çš„æ–‡ä»¶è·Ÿé™„å¸¦ä¿¡æ¯ï¼Œé™„å¸¦ä¿¡æ¯ä»¥é”®å€¼å¯¹å½¢å¼å­˜æ”¾
+	 * FormData¶ÔÏó,´æ´¢½«ÉÏ´«µÄÎÄ¼ş¸ú¸½´øĞÅÏ¢£¬¸½´øĞÅÏ¢ÒÔ¼üÖµ¶ÔĞÎÊ½´æ·Å
 	 */
 	var formData = new FormData();
+	
+	/**
+	 * ºËĞÄÉÏ´«Àà
+	 */
+	var xhr = new XMLHttpRequest();
 
 	/**
-	 * åˆå§‹åŒ–æ–‡ä»¶ä¸Šä¼ å¯¹è±¡
-	 * emIdä¸ºinput [type = file]çš„Id
+	 * ³õÊ¼»¯ÎÄ¼şÉÏ´«¶ÔÏó emIdÎªinput [type = file]µÄId
 	 */
-	this.init = function(emId) {
+	this.bindFiles = function(emId) {
 		fileInput = document.getElementById(emId);
 		fileInput.onchange = function() {
 			var files = fileInput.files;
@@ -45,7 +49,7 @@ function XFileUploader() {
 							.toString()
 							+ 'K';
 				} else {
-					fileSize = (Math.round(fileSize)
+					fileSize = (Math.round(fileSize))
 					.toString()
 					+ 'B';
 				}
@@ -56,7 +60,7 @@ function XFileUploader() {
 	}
 
 	/**
-	 * ä¸Šä¼ æ–‡ä»¶
+	 * ÉÏ´«ÎÄ¼ş
 	 */
 	this.upload = function(url) {
 		var name = fileInput.getAttribute("name");
@@ -66,17 +70,22 @@ function XFileUploader() {
 				formData.append(name, fileLists[i]);
 			}
 		}
-		formData.append("test", "hello");
-		var xhr = new XMLHttpRequest();
 		xhr.upload.addEventListener("progress", this.onProgress, false);
 		xhr.addEventListener("load", this.onComplete, false);
 		xhr.addEventListener("error", this.onFailed, false);
 		xhr.addEventListener("abort", this.onCanceled, false);
-		xhr.open("POST", url);// ä¿®æ”¹æˆè‡ªå·±çš„æ¥å£
+		xhr.open("POST", url);// ĞŞ¸Ä³É×Ô¼ºµÄ½Ó¿Ú
 		xhr.send(formData);
 	}
+	
 	/**
-	 * æ–‡ä»¶ä¸Šä¼ ä¸­
+	 * È¡ÏûÉÏ´«
+	 */
+	this.cancel = function() {
+		xhr.abort();
+	}
+	/**
+	 * ÎÄ¼şÉÏ´«ÖĞ
 	 */
 	this.onProgress = function(evt) {
 		if (evt.lengthComputable) {
@@ -97,7 +106,7 @@ function XFileUploader() {
 		}
 	}
 	/**
-	 * æ–‡ä»¶ä¸Šä¼ å®Œæ¯•
+	 * ÎÄ¼şÉÏ´«Íê±Ï
 	 */
 	this.onComplete = function(evt) {
 		if (onSuccess) {
@@ -106,16 +115,16 @@ function XFileUploader() {
 		console.log("onSuccess");
 	}
 	/**
-	 * æ–‡ä»¶ä¸Šä¼ å¤±è´¥
+	 * ÎÄ¼şÉÏ´«Ê§°Ü
 	 */
 	this.onFailed = function(evt) {
 		if (onFailed) {
 			onFailed("failed");
 		}
-		console.log("onSuccess");
+		console.log("onFailed");
 	}
 	/**
-	 * æ–‡ä»¶å–æ¶ˆä¸Šä¼ 
+	 * ÎÄ¼şÈ¡ÏûÉÏ´«
 	 */
 	this.onCanceled = function(evt) {
 		if (onCanceled) {
@@ -125,7 +134,7 @@ function XFileUploader() {
 	}
 	
 	/**
-	 * è®¾ç½®ä¸Šä¼ æ—¶é™„å¸¦çš„é”®å€¼å¯¹ä¿¡æ¯
+	 * ÉèÖÃÉÏ´«Ê±¸½´øµÄ¼üÖµ¶ÔĞÅÏ¢
 	 */
 	this.setParams = function(mapData){
 		if (mapData && mapData instanceof  HashMap) {
@@ -135,30 +144,30 @@ function XFileUploader() {
 				formData.append(k,mapData.get(k));
 			}
 		} else {
-			alert("å‚æ•°æ•°æ®ç±»å‹é”™è¯¯ï¼Œå¿…é¡»ä¸ºHashMapå¯¹è±¡");
+			alert("²ÎÊıÊı¾İÀàĞÍ´íÎó£¬±ØĞëÎªHashMap¶ÔÏó");
 		}
 	}
 	
 	/**
-	 * è®¾ç½®ä¸Šä¼ è¿‡ç¨‹å›è°ƒç›‘å¬
+	 * ÉèÖÃÉÏ´«¹ı³Ì»Øµ÷¼àÌı
 	 */
 	this.setOnUploadingListener = function(callback) {
 		onUploading = callback;
 	}
 	/**
-	 * è®¾ç½®ä¸Šä¼ æˆåŠŸå›è°ƒç›‘å¬
+	 * ÉèÖÃÉÏ´«³É¹¦»Øµ÷¼àÌı
 	 */
 	this.setOnSuccessListener = function(callback) {
 		onSuccess = callback;
 	}
 	/**
-	 * è®¾ç½®ä¸Šä¼ å¤±è´¥å›è°ƒç›‘å¬
+	 * ÉèÖÃÉÏ´«Ê§°Ü»Øµ÷¼àÌı
 	 */
 	this.setOnFailedListener = function(callback) {
 		onFailed = callback;
 	}
 	/**
-	 * è®¾ç½®å–æ¶ˆä¸Šä¼ å›è°ƒç›‘å¬
+	 * ÉèÖÃÈ¡ÏûÉÏ´«»Øµ÷¼àÌı
 	 */
 	this.setOnCanceledListener = function(callback) {
 		onCanceled = callback;
@@ -167,30 +176,30 @@ function XFileUploader() {
 }
 
 /**
- * å®šä¹‰é”®å€¼å¯¹
- * */
+ * ¶¨Òå¼üÖµ¶Ô
+ */
 function HashMap() {
-	// å®šä¹‰é•¿åº¦
+	// ¶¨Òå³¤¶È
 	var length = 0;
-	// åˆ›å»ºä¸€ä¸ªå¯¹è±¡
+	// ´´½¨Ò»¸ö¶ÔÏó
 	var obj = new Object();
 
 	/**
-	 * åˆ¤æ–­Mapæ˜¯å¦ä¸ºç©º
+	 * ÅĞ¶ÏMapÊÇ·ñÎª¿Õ
 	 */
 	this.isEmpty = function() {
 		return length == 0;
 	};
 
 	/**
-	 * åˆ¤æ–­å¯¹è±¡ä¸­æ˜¯å¦åŒ…å«ç»™å®šKey
+	 * ÅĞ¶Ï¶ÔÏóÖĞÊÇ·ñ°üº¬¸ø¶¨Key
 	 */
 	this.containsKey = function(key) {
 		return(key in obj);
 	};
 
 	/**
-	 * åˆ¤æ–­å¯¹è±¡ä¸­æ˜¯å¦åŒ…å«ç»™å®šçš„Value
+	 * ÅĞ¶Ï¶ÔÏóÖĞÊÇ·ñ°üº¬¸ø¶¨µÄValue
 	 */
 	this.containsValue = function(value) {
 		for(var key in obj) {
@@ -202,7 +211,7 @@ function HashMap() {
 	};
 
 	/**
-	 * å‘mapä¸­æ·»åŠ æ•°æ®
+	 * ÏòmapÖĞÌí¼ÓÊı¾İ
 	 */
 	this.put = function(key, value) {
 		if(!this.containsKey(key)) {
@@ -212,14 +221,14 @@ function HashMap() {
 	};
 
 	/**
-	 * æ ¹æ®ç»™å®šçš„Keyè·å¾—Value
+	 * ¸ù¾İ¸ø¶¨µÄKey»ñµÃValue
 	 */
 	this.get = function(key) {
 		return this.containsKey(key) ? obj[key] : null;
 	};
 
 	/**
-	 * æ ¹æ®ç»™å®šçš„Keyåˆ é™¤ä¸€ä¸ªå€¼
+	 * ¸ù¾İ¸ø¶¨µÄKeyÉ¾³ıÒ»¸öÖµ
 	 */
 	this.remove = function(key) {
 		if(this.containsKey(key) && (delete obj[key])) {
@@ -228,7 +237,7 @@ function HashMap() {
 	};
 
 	/**
-	 * è·å¾—Mapä¸­çš„æ‰€æœ‰Value
+	 * »ñµÃMapÖĞµÄËùÓĞValue
 	 */
 	this.values = function() {
 		var _values = new Array();
@@ -239,7 +248,7 @@ function HashMap() {
 	};
 
 	/**
-	 * è·å¾—Mapä¸­çš„æ‰€æœ‰Key
+	 * »ñµÃMapÖĞµÄËùÓĞKey
 	 */
 	this.keySet = function() {
 		var _keys = new Array();
@@ -250,14 +259,14 @@ function HashMap() {
 	};
 
 	/**
-	 * è·å¾—Mapçš„é•¿åº¦
+	 * »ñµÃMapµÄ³¤¶È
 	 */
 	this.size = function() {
 		return length;
 	};
 
 	/**
-	 * æ¸…ç©ºMap
+	 * Çå¿ÕMap
 	 */
 	this.clear = function() {
 		length = 0;
@@ -265,7 +274,7 @@ function HashMap() {
 	};
 
 	/**
-	 * å°†hashMapè½¬æ¢æˆjson
+	 * ½«hashMap×ª»»³Éjson
 	 */
 	this.toString = function() {
 		var s = "[";
